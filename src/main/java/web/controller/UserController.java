@@ -35,17 +35,25 @@ public class UserController {
 
     @GetMapping("/edit/{id}")
     public String editUser(Model model, @PathVariable("id") String userId) {
-        User editableUser = userServiceImp.findUserById(Long.parseLong(userId));
-        model.addAttribute("editableUser", editableUser);
-        return "user-edit";
+        try {
+            User editableUser = userServiceImp.findUserById(Long.parseLong(userId));
+            model.addAttribute("editableUser", editableUser);
+            return "user-edit";
+        } catch (NumberFormatException nfe) {
+            return "404";
+        }
     }
 
     @PostMapping("/edit/{id}")
     public String saveEditedUser(@ModelAttribute("editableUser") User editedUser,
                                  @PathVariable("id") String userId) {
-        editedUser.setId(Long.parseLong(userId));
-        userServiceImp.updateUser(editedUser);
-        return "redirect:/";
+        try {
+            editedUser.setId(Long.parseLong(userId));
+            userServiceImp.updateUser(editedUser);
+            return "redirect:/";
+        } catch (NumberFormatException nfe) {
+            return "404";
+        }
     }
 
     @RequestMapping("/delete/{id}")
